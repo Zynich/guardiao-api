@@ -1,12 +1,14 @@
 services:
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: guardiao-api
     volumes:
-      - ./app:/app            
-    working_dir: /app         
+      - ./app:/app
+    working_dir: /app
     ports:
-      - "3001:3000"
+      - "4001:4000"
     depends_on:
       - mysql
       - redis
@@ -30,11 +32,21 @@ services:
     ports:
       - "6379:6379"
 
-  adminer:
-    image: adminer
-    container_name: guardiao-adminer
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: guardiao-phpmyadmin
     ports:
-      - "8080:8080"
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - mysql
 
 volumes:
   mysql_data:
+
+networks:
+  default:
+    name: guardiao-net
+    external: true
